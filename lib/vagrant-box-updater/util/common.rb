@@ -1,3 +1,5 @@
+require 'open-uri'
+
 module VagrantPlugins
   module BoxUpdater
     module Util
@@ -66,6 +68,14 @@ module VagrantPlugins
         end
         
         def self.get_local_file_modification_date?(url)
+		  if url.start_with?("file://")
+			url = url.slice(7..-1)
+			if url.start_with?("/")
+			  url = url.slice(1..-1)
+			end
+			url = URI::decode(url)
+		  end
+		
           mtime = File.mtime(url)
           return { 'Last-Modified' => mtime }
         end
